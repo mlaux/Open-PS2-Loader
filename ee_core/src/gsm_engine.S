@@ -219,10 +219,10 @@ addiu	$sp, $sp, 0x0010			# Restore sp during return
 # $t1 = rt
 # $t2 = value in rt
 # $t3 = base
-# $t4 = address
-# $t5 = address holding rt within array
-# $t6 = address holding base within array
-# $t7 = new value for rt
+# $a4 = address
+# $a5 = address holding rt within array
+# $a6 = address holding base within array
+# $a7 = new value for rt
 #
 
 .globl GSHandler
@@ -243,10 +243,10 @@ sq $t0, 0x080($k1)
 sq $t1, 0x090($k1)
 sq $t2, 0x0A0($k1)
 sq $t3, 0x0B0($k1)
-sq $t4, 0x0C0($k1)
-sq $t5, 0x0D0($k1)
-sq $t6, 0x0E0($k1)
-sq $t7, 0x0F0($k1)
+sq $a4, 0x0C0($k1)
+sq $a5, 0x0D0($k1)
+sq $a6, 0x0E0($k1)
+sq $a7, 0x0F0($k1)
 sq $s0, 0x100($k1)
 sq $s1, 0x110($k1)
 sq $s2, 0x120($k1)
@@ -649,16 +649,16 @@ andi	$t1,$t1,0x0FFF
 addi	$t1,$t1,1		# t1 = Source_Width = Source_DW + 1
 divu	$t1,$t0		# LO = Source_Pixels_Width = Source_Width / Source_Width_Scale
 dsrl32	$t0,$v1,0
-andi	$t5,$t0,0x0FFF
-mflo	$t4				# t4 = LO = Source_Pixels_Width
-addi	$t6,$t5,1		# t6 = Target_Width = Target_DW + 1
-divu	$t6,$t4		# LO = Target_Width_Scale = Target_Width / Source_Pixels_Width
+andi	$a5,$t0,0x0FFF
+mflo	$a4				# t4 = LO = Source_Pixels_Width
+addi	$a6,$a5,1		# t6 = Target_Width = Target_DW + 1
+divu	$a6,$a4		# LO = Target_Width_Scale = Target_Width / Source_Pixels_Width
 mflo	$t0				# t0 = LO = Target_Width_Scale
 bne	$t0,$zero,have_DISPLAY_write_2		# in case of (!Target_Width_Scale)
 nop						# {
-or	$t7,$zero,$t5		# t7 = Target_DW = Target_Width - 1
-sub	$t0,$t6,$t4			# t0 = Target_Width - Source_Pixels_Width
-li	$t4,0				# t4 = Target_MAGH = 0
+or	$a7,$zero,$a5		# t7 = Target_DW = Target_Width - 1
+sub	$t0,$a6,$a4			# t0 = Target_Width - Source_Pixels_Width
+li	$a4,0				# t4 = Target_MAGH = 0
 beql	$zero,$zero,have_DISPLAY_write_4		# }
 nop						# otherwise
 						# Target_Width_Scale nonzero
@@ -669,10 +669,10 @@ bgtzl	$t1,have_DISPLAY_write_3			# in case of (Target_Width_Scale > 16)
 or	$t0,$zero,16		# 	t0 = Target_Width_Scale = 16;
 
 have_DISPLAY_write_3:
-mult	$t1,$t4,$t0			# LO = Calculated_Width = (Source_Pixels_Width * Target_Width_Scale)
-addi	$t7,$t1,-1		# t7 = Calculated_DW = Calculated_Width - 1
-addi	$t4,$t0,-1		# t4 = Calculated_MAGH = Target_Width_Scale - 1
-sub	$t0,$t5,$t7			# t0 = Target_DW - Calculated_DW
+mult	$t1,$a4,$t0			# LO = Calculated_Width = (Source_Pixels_Width * Target_Width_Scale)
+addi	$a7,$t1,-1		# t7 = Calculated_DW = Calculated_Width - 1
+addi	$a4,$t0,-1		# t4 = Calculated_MAGH = Target_Width_Scale - 1
+sub	$t0,$a5,$a7			# t0 = Target_DW - Calculated_DW
 
 have_DISPLAY_write_4:                     # }
 dsra $t0,$t0,1			# t0 = t0 / 2 = Half_Excess_Width (can be negative)
@@ -683,32 +683,32 @@ dsra $t0,$t0,1			# t0 = t0 / 2 = Half_Excess_Width (can be negative)
 # | DX   | 11:0  | int 0:12:0 | x pos in display area (VCK units)     | 0xFFF |
 # '------^-------^------------^---------------------------------------^-------^
 andi	$t1,$v1,0x0FFF	# t1 = Target_DX
-add	$t6,$t0,$t1			# t6 = Calculated_DX = Target_DX + Half_Excess_Width
-bltzl	$t6,have_DISPLAY_write_5			# in case of (Calculated_DX < 0)
-and	$t6,$t6,$zero		# 	Calculated_DX = 0;
+add	$a6,$t0,$t1			# t6 = Calculated_DX = Target_DX + Half_Excess_Width
+bltzl	$a6,have_DISPLAY_write_5			# in case of (Calculated_DX < 0)
+and	$a6,$a6,$zero		# 	Calculated_DX = 0;
 
 have_DISPLAY_write_5:
-sub	$t0,$t1,$t6			# t0 = Target_DX - Calculated_DX
+sub	$t0,$t1,$a6			# t0 = Target_DX - Calculated_DX
 bgtzl	$t0,have_DISPLAY_write_6			# in case of (Target_DX > Calculated_DX)
-add	$t7,$t7,$t0			# 	t7 = Calculated_DW = Calculated_DW + Target_DX - Calculated_DX  # Target DW adjusted
+add	$a7,$a7,$t0			# 	t7 = Calculated_DW = Calculated_DW + Target_DX - Calculated_DX  # Target DW adjusted
 
 have_DISPLAY_write_6:
-andi	$t7,$t7,0x0FFF
-andi	$t4,$t4,0x000F
-andi	$t6,$t6,0x0FFF
-dsll32	$t0,$t7,0		# t0 = Calculated_DW
+andi	$a7,$a7,0x0FFF
+andi	$a4,$a4,0x000F
+andi	$a6,$a6,0x0FFF
+dsll32	$t0,$a7,0		# t0 = Calculated_DW
 or	$v0,$v0,$t0			# v0 = Adapted_DISPLAY = (Adapted_DISPLAY) OR (Calculated_DW)
-dsll	$t0,$t4,23
+dsll	$t0,$a4,23
 or	$v0,$v0,$t0			# v0 = Adapted_DISPLAY = (Adapted_DISPLAY) OR (Calculated_MAGH)
 
 lw	$t1, X_offset($s2)	# t1 = X_offset (signed)
-add	$t6, $t6, $t1		# t6 = Calculated_DX = Calculated_DX + X_offset
-bltzl	$t6, have_DISPLAY_write_7		# Is the result not greater or equal to zero?
-move	$t6, $zero		# t6 = Calculated_DX = 0
+add	$a6, $a6, $t1		# t6 = Calculated_DX = Calculated_DX + X_offset
+bltzl	$a6, have_DISPLAY_write_7		# Is the result not greater or equal to zero?
+move	$a6, $zero		# t6 = Calculated_DX = 0
 have_DISPLAY_write_7:
-andi	$t6,$t6,0x0FFF
+andi	$a6,$a6,0x0FFF
 
-or	$v0,$v0,$t6			# v0 = Adapted_DISPLAY = (Adapted_DISPLAY) OR (Calculated_DX)
+or	$v0,$v0,$a6			# v0 = Adapted_DISPLAY = (Adapted_DISPLAY) OR (Calculated_DX)
 
 # ----- VERTICAL FIELDS -------
 # .------.-------.------------.---------------------------------------.-------.
@@ -731,17 +731,17 @@ andi	$t1,$t1,0x07FF
 addi	$t1,$t1,1		# Source_Height = Source_DH + 1
 divu	$t1,$t0		# LO = Source_Pixels_Height = Source_Height / Source_Height_Scale
 dsrl32	$t0,$v1,12
-andi	$t5,$t0,0x07FF
-mflo	$t4				# t4 = LO = Source_Pixels_Height
-addi	$t6,$t5,1		# t6 = Target_Height = Target_DH + 1
-divu	$t6,$t4		# LO = Target_Height_Scale = Target_Height / Source_Pixels_Height
+andi	$a5,$t0,0x07FF
+mflo	$a4				# t4 = LO = Source_Pixels_Height
+addi	$a6,$a5,1		# t6 = Target_Height = Target_DH + 1
+divu	$a6,$a4		# LO = Target_Height_Scale = Target_Height / Source_Pixels_Height
 mflo	$t0				# t0 = LO = Target_Height_Scale
 bne	$t0,$zero,have_DISPLAY_write_8		# in case of (!Target_Height_Scale)
 nop						# {
-or	$t7,$zero,$t5		# t7 = Target_DH = Target_Height - 1
-sub	$t0,$t6,$t4			# t0 = Target_Height - Source_Pixels_Height
+or	$a7,$zero,$a5		# t7 = Target_DH = Target_Height - 1
+sub	$t0,$a6,$a4			# t0 = Target_Height - Source_Pixels_Height
 b	have_DISPLAY_write_10		# }
-move	$t4, $zero			# t4 = Target_MAGV = 0
+move	$a4, $zero			# t4 = Target_MAGV = 0
 					# otherwise, Target_Height_Scale nonzero
 
 have_DISPLAY_write_8:						# {
@@ -750,10 +750,10 @@ bgtzl	$t1,have_DISPLAY_write_9			# in case of (Target_Height_Scale > 4)
 or	$t0,$zero,4			# 	t0 = Target_Height_Scale = 4;
 
 have_DISPLAY_write_9:
-mult	$t1,$t4,$t0			# t1 = Calculated_Height = (Source_Pixels_Height * Target_Height_Scale)
-addi	$t7,$t1,-1		# t7 = Calculated_DH = Calculated_Height - 1
-addi	$t4,$t0,-1		# t4 = Calculated_MAGV = Target_Height_Scale - 1
-sub	$t0,$t5,$t7			# t0 = Target_DH - Calculated_DH
+mult	$t1,$a4,$t0			# t1 = Calculated_Height = (Source_Pixels_Height * Target_Height_Scale)
+addi	$a7,$t1,-1		# t7 = Calculated_DH = Calculated_Height - 1
+addi	$a4,$t0,-1		# t4 = Calculated_MAGV = Target_Height_Scale - 1
+sub	$t0,$a5,$a7			# t0 = Target_DH - Calculated_DH
 
 have_DISPLAY_write_10:						# }
 dsra $t0,$t0,1			# t0 = t0 / 2 = Half_Excess_Height (can be negative)
@@ -765,14 +765,14 @@ dsra $t0,$t0,1			# t0 = t0 / 2 = Half_Excess_Height (can be negative)
 # '------^-------^------------^---------------------------------------^-------^
 dsrl	$t1,$v1,12
 andi	$t1,$t1,0x07FF	# t1 = Target_DY
-add	$t6,$t0,$t1			# t6 = Calculated_DY = Target_DY + Half_Excess_Height
-bltzl	$t6,have_DISPLAY_write_11			# in case of (Calculated_DY < 0)
-and	$t6,$t6,$zero		#	Calculated_DY = 0;
+add	$a6,$t0,$t1			# t6 = Calculated_DY = Target_DY + Half_Excess_Height
+bltzl	$a6,have_DISPLAY_write_11			# in case of (Calculated_DY < 0)
+and	$a6,$a6,$zero		#	Calculated_DY = 0;
 
 have_DISPLAY_write_11:
-sub	$t0,$t1,$t6			# t0 = Target_DY - Calculated_DY
+sub	$t0,$t1,$a6			# t0 = Target_DY - Calculated_DY
 bgtzl	$t0,have_DISPLAY_write_12			# in case of (Target_DY > Calculated_DY)
-add	$t7,$t7,$t0			# 	t7 = Calculated_DH = Calculated_DH + Target_DY - Calculated_DY # Target DH adjusted
+add	$a7,$a7,$t0			# 	t7 = Calculated_DH = Calculated_DH + Target_DY - Calculated_DY # Target DH adjusted
 
 have_DISPLAY_write_12:
 lb	$t0, Interlace_FRAME_Mode_Flag($s3)	# in case of Double Height not needed
@@ -783,30 +783,30 @@ ld	$t0, Target_SMODE2($s1)
 andi	$t0,$t0,1							# in case of Target_SMODE2.INT = 1 (Interlace Mode)
 bne	$t0,$zero,have_DISPLAY_write_13							# 	Calculation is complete
 nop
-beql	$t4,$zero,have_DISPLAY_write_13	# in case of Calculated_MAGV = 0
-addi	$t4,$t4,1		# 	go use Calculated_MAGV = Calculated_MAGV + 1
-addi	$t4,$t4,2		# Calculated_MAGV = Calculated_MAGV + 2 (Because scale was 2 or larger)
-addi	$t0,$t4,-4		# Compare Calculated_MAGV with 4 (too large ?)
+beql	$a4,$zero,have_DISPLAY_write_13	# in case of Calculated_MAGV = 0
+addi	$a4,$a4,1		# 	go use Calculated_MAGV = Calculated_MAGV + 1
+addi	$a4,$a4,2		# Calculated_MAGV = Calculated_MAGV + 2 (Because scale was 2 or larger)
+addi	$t0,$a4,-4		# Compare Calculated_MAGV with 4 (too large ?)
 bgezl	$t0,have_DISPLAY_write_13			# in case of  Calculated_MAGV too large
-ori	$t4,$zero,3			# 	go use Calculated_MAGV = 3
+ori	$a4,$zero,3			# 	go use Calculated_MAGV = 3
 
 have_DISPLAY_write_13:
-andi	$t7,$t7,0x07FF
-andi	$t4,$t4,0x0003
-andi	$t6,$t6,0x07FF
-dsll32	$t0,$t7,12
+andi	$a7,$a7,0x07FF
+andi	$a4,$a4,0x0003
+andi	$a6,$a6,0x07FF
+dsll32	$t0,$a7,12
 or	$v0,$v0,$t0			# v0 = Adapted_DISPLAY = (Adapted_DISPLAY) OR (Calculated_DH)
-dsll	$t0,$t4,27
+dsll	$t0,$a4,27
 or	$v0,$v0,$t0			# v0 = Adapted_DISPLAY = (Adapted_DISPLAY) OR (Calculated_MAGV)
 
 lw	$t1, Y_offset($s2)		# t1 = Y_offset (signed)
-add	$t6, $t6, $t1		# t6 = Calculated_DY = Calculated_DY + Y_offset
-bltzl	$t6, have_DISPLAY_write_14		# Is the result not greater or equal to zero?
-move	$t6, $zero
+add	$a6, $a6, $t1		# t6 = Calculated_DY = Calculated_DY + Y_offset
+bltzl	$a6, have_DISPLAY_write_14		# Is the result not greater or equal to zero?
+move	$a6, $zero
 have_DISPLAY_write_14:
-andi	$t6,$t6,0x07FF
+andi	$a6,$a6,0x07FF
 
-dsll	$t0,$t6,12
+dsll	$t0,$a6,12
 
 jr $ra
 or	$v0,$v0,$t0        # v0 = Adapted_DISPLAY = (Adapted_DISPLAY) OR (Calculated_DY)
@@ -899,10 +899,10 @@ lq $a3, 0x070($k0)
 # lq $t1, 0x090($k0)
 # lq $t2, 0x0A0($k0)
 lq $t3, 0x0B0($k0)
-lq $t4, 0x0C0($k0)
-lq $t5, 0x0D0($k0)
-lq $t6, 0x0E0($k0)
-lq $t7, 0x0F0($k0)
+lq $a4, 0x0C0($k0)
+lq $a5, 0x0D0($k0)
+lq $a6, 0x0E0($k0)
+lq $a7, 0x0F0($k0)
 lq $s0, 0x100($k0)
 lq $s1, 0x110($k0)
 lq $s2, 0x120($k0)
