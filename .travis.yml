@@ -7,7 +7,7 @@ sudo: required
 
 env:
   - MATRIX_EVAL="PS2DOCKER=akuhak/ps2toolchain PS2FORK=ps2dev PS2BRANCH=master"
-  - MATRIX_EVAL="PS2DOCKER=ps2homebrew/ps2toolchain PS2FORK=uyjulian PS2BRANCH=uyjworking"
+  - MATRIX_EVAL="PS2DOCKER=ps2homebrew/ps2toolchain PS2FORK=AKuHAK PS2BRANCH=test1"
 
 matrix:
 #  fast_finish: false
