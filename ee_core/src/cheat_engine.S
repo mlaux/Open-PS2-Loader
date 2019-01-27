@@ -81,10 +81,10 @@ EngineHandler:
 	sd	$t1, 0x48($sp)
 	sd	$t2, 0x50($sp)
 	sd	$t3, 0x58($sp)
-	sd	$t4, 0x60($sp)
-	sd	$t5, 0x68($sp)
-	sd	$t6, 0x70($sp)
-	sd	$t7, 0x78($sp)
+	sd	$a4, 0x60($sp)
+	sd	$a5, 0x68($sp)
+	sd	$a6, 0x70($sp)
+	sd	$a7, 0x78($sp)
 	sd	$s0, 0x80($sp)
 	sd	$s1, 0x88($sp)
 	sd	$s2, 0x90($sp)
@@ -113,10 +113,10 @@ eh_jal:
 	ld	$s2, 0x90($sp)
 	ld	$s1, 0x88($sp)
 	ld	$s0, 0x80($sp)
-	ld	$t7, 0x78($sp)
-	ld	$t6, 0x70($sp)
-	ld	$t5, 0x68($sp)
-	ld	$t4, 0x60($sp)
+	ld	$a7, 0x78($sp)
+	ld	$a6, 0x70($sp)
+	ld	$a5, 0x68($sp)
+	ld	$a4, 0x60($sp)
 	ld	$t3, 0x58($sp)
 	ld	$t2, 0x50($sp)
 	ld	$t1, 0x48($sp)
@@ -152,11 +152,11 @@ CodeHandler:
 	 * $t0 - ptr to code list
 	 * $t1 - ptr to jump table for code types
 	 * $t3 - total number of codes
-	 * $t4 - number of codes done
+	 * $a4 - number of codes done
 	 */
 	lw	$t3, numcodes
 	beqz	$t3, ch_ret
-	li	$t4, 0
+	li	$a4, 0
 	la	$t0, codelist
 	la	$t1, type_tab
 ch_loop:
@@ -165,20 +165,20 @@ ch_loop:
 	 * $a0 - RAM address
 	 * $a1 - code value
 	 */
-	sll	$at, $t4, 3
+	sll	$at, $a4, 3
 	addu	$t2, $t0, $at
 	lw	$a0, 0($t2)
 	beqz	$a0, next
 	srl	$a2, $a0, 28
 	sll	$a2, 2
 	addu	$a2, $t1
-	lw	$t5, 0($a2)
-	beqz	$t5, next
+	lw	$a5, 0($a2)
+	beqz	$a5, next
 	sll	$a0, 7
 	srl	$a0, 7
 
 	/* jump to code type handler */
-	jr	$t5
+	jr	$a5
 	lw	$a1, 4($t2)
 type_0:
 	/*
@@ -236,31 +236,31 @@ type_3:
 	 *
 	 * It increments/decrements the current value at address @a by value @v.
 	 */
-	srl	$t6, $a0, 20
-	andi	$at, $t6, 1	/* 0=inc, 1=dec */
+	srl	$a6, $a0, 20
+	andi	$at, $a6, 1	/* 0=inc, 1=dec */
 	andi	$a0, 0xffff
 	sll	$a1, 7
 	srl	$a1, 7
-	andi	$t6, 6		/* zero for 8 bit */
-	andi	$a2, $t6, 2	/* non-zero for 16 bit */
-	beqzl	$t6, 1f
-	lbu	$t5, 0($a1)
+	andi	$a6, 6		/* zero for 8 bit */
+	andi	$a2, $a6, 2	/* non-zero for 16 bit */
+	beqzl	$a6, 1f
+	lbu	$a5, 0($a1)
 	bnezl	$a2, 1f
-	lhu	$t5, 0($a1)
-	lw	$t5, 0($a1)
+	lhu	$a5, 0($a1)
+	lw	$a5, 0($a1)
 	lw	$a0, 8($t2)
-	addiu	$t4, 1
+	addiu	$a4, 1
 1:
 	beqzl	$at, 2f
-	addu	$t5, $a0
-	subu	$t5, $a0
+	addu	$a5, $a0
+	subu	$a5, $a0
 2:
-	beqzl	$t6, next
-	sb	$t5, 0($a1)
+	beqzl	$a6, next
+	sb	$a5, 0($a1)
 	bnezl	$a2, next
-	sh	$t5, 0($a1)
+	sh	$a5, 0($a1)
 	b	next
-	sw	$t5, 0($a1)
+	sw	$a5, 0($a1)
 type_4:
 	/*
 	 * "32-bit constant serial write"
@@ -274,7 +274,7 @@ type_4:
 	 */
 	lw	$a2, 8($t2)
 	lw	$a3, 12($t2)
-	srl	$t5, $a1, 16
+	srl	$a5, $a1, 16
 	andi	$a1, 0xffff
 	sll	$a1, 2
 1:
@@ -282,11 +282,11 @@ type_4:
 	nop
 	sw	$a2, 0($a0)
 	addu	$a2, $a3
-	addiu	$t5, -1
-	bgtz	$t5, 1b
+	addiu	$a5, -1
+	bgtz	$a5, 1b
 	addu	$a0, $a1
 	b	next
-	addiu	$t4, 1
+	addiu	$a4, 1
 type_5:
 	/*
 	 * "Copy bytes"
@@ -299,15 +299,15 @@ type_5:
 	 */
 	lw	$a2, 8($t2)
 1:
-	lb	$t5, 0($a0)
+	lb	$a5, 0($a0)
 	nop
-	sb	$t5, 0($a2)
+	sb	$a5, 0($a2)
 	addiu	$a2, 1
 	addiu	$a1, -1
 	bgtz	$a1, 1b
 	addiu	$a0, 1
 	b	next
-	addiu	$t4, 1
+	addiu	$a4, 1
 type_6:
 	/*
 	 * "Pointer write"
@@ -327,22 +327,22 @@ type_6:
 	 * Loads 32-bit base address from address @a, adds offset @i to it, and
 	 * constantly writes the value @v to the final address.
 	 */
-	lw	$t5, 0($a0)
+	lw	$a5, 0($a0)
 	li	$at, 0x3ffffffc
-	and	$t5, $at
-	beqz	$t5, 1f
+	and	$a5, $at
+	beqz	$a5, 1f
 	lhu	$a2, 10($t2)
 	lw	$a3, 12($t2)
-	addu	$t5, $a3
+	addu	$a5, $a3
 	beqzl	$a2, 1f
-	sb	$a1, 0($t5)
+	sb	$a1, 0($a5)
 	addiu	$a2, -1
 	beqzl	$a2, 1f
-	sh	$a1, 0($t5)
-	sw	$a1, 0($t5)
+	sh	$a1, 0($a5)
+	sw	$a1, 0($a5)
 1:
 	b	next
-	addiu	$t4, 1
+	addiu	$a4, 1
 type_7:
 	/*
 	 * "Boolean operation"
@@ -368,24 +368,24 @@ type_7:
 	 * Performs a bitwise logical operation between value @v and the value
 	 * stored at address @a.
 	 */
-	srl	$t6, $a1, 20
-	andi	$at, $t6, 1	/* 0=8 bit, 1=16 bit */
-	andi	$t6, 6		/* 0=OR, 2=AND, 4=XOR */
+	srl	$a6, $a1, 20
+	andi	$at, $a6, 1	/* 0=8 bit, 1=16 bit */
+	andi	$a6, 6		/* 0=OR, 2=AND, 4=XOR */
 	bnezl	$at, 1f
-	lhu	$t5, 0($a0)
-	lbu	$t5, 0($a0)
+	lhu	$a5, 0($a0)
+	lbu	$a5, 0($a0)
 1:
-	beqzl	$t6, 2f
-	or	$t5, $a1
-	addiu	$t6, -2
-	beqzl	$t6, 2f
-	and	$t5, $a1
-	xor	$t5, $a1
+	beqzl	$a6, 2f
+	or	$a5, $a1
+	addiu	$a6, -2
+	beqzl	$a6, 2f
+	and	$a5, $a1
+	xor	$a5, $a1
 2:
 	bnezl	$at, next
-	sh	$t5, 0($a0)
+	sh	$a5, 0($a0)
 	b	next
-	sb	$t5, 0($a0)
+	sb	$a5, 0($a0)
 type_c:
 	/*
 	 * "32-bit do all following codes if equal to"
@@ -395,8 +395,8 @@ type_c:
 	 * All following codes will be executed only if 32-bit value at address
 	 * @a is equal to value @v.
 	 */
-	lw	$t5, 0($a0)
-	bne	$t5, $a1, ch_ret
+	lw	$a5, 0($a0)
+	bne	$a5, $a1, ch_ret
 	nop
 	b	next
 	nop
@@ -419,50 +419,50 @@ type_d:
 	 */
 	srl	$a3, $a1, 16
 	andi	$a3, 1
-	srl	$t6, $a1, 20
+	srl	$a6, $a1, 20
 	srl	$a2, $a1, 24
 	beqzl	$a2, 1f		/* set @n to 1 if 0 for compatibility */
 	li	$a2, 1
 1:
 	beqz	$a3, 2f
-	andi	$t6, 7
-	lbu	$t5, 0($a0)
+	andi	$a6, 7
+	lbu	$a5, 0($a0)
 	b	3f
 	andi	$a1, 0xff
 2:
-	lhu	$t5, 0($a0)
+	lhu	$a5, 0($a0)
 	andi	$a1, 0xffff
 3:
-	beqzl	$t6, 4f		/* equal */
-	subu	$t5, $a1
+	beqzl	$a6, 4f		/* equal */
+	subu	$a5, $a1
 	li	$at, 1		/* not equal */
-	beql	$t6, $at, 5f
-	subu	$t5, $a1
+	beql	$a6, $at, 5f
+	subu	$a5, $a1
 	li	$at, 2		/* less than */
-	beql	$t6, $at, 5f
-	sltu	$t5, $a1
+	beql	$a6, $at, 5f
+	sltu	$a5, $a1
 	li	$at, 3		/* greater than */
-	beql	$t6, $at, 5f
-	sltu	$t5, $a1, $t5
+	beql	$a6, $at, 5f
+	sltu	$a5, $a1, $a5
 	li	$at, 4		/* NAND */
-	beql	$t6, $at, 4f
-	and	$t5, $a1
+	beql	$a6, $at, 4f
+	and	$a5, $a1
 	li	$at, 5		/* AND */
-	beql	$t6, $at, 5f
-	and	$t5, $a1
+	beql	$a6, $at, 5f
+	and	$a5, $a1
 	li	$at, 6		/* NOR */
-	beql	$t6, $at, 4f
-	or	$t5, $a1
+	beql	$a6, $at, 4f
+	or	$a5, $a1
 	b	5f		/* OR */
-	or	$t5, $a1
+	or	$a5, $a1
 4:				/* skip if non-zero */
-	bnezl	$t5, next
-	addu	$t4, $a2
+	bnezl	$a5, next
+	addu	$a4, $a2
 	b	next
 	nop
 5:				/* skip if zero */
-	beqzl	$t5, next
-	addu	$t4, $a2
+	beqzl	$a5, next
+	addu	$a4, $a2
 	b	next
 	nop
 type_e:
@@ -489,16 +489,16 @@ type_e:
 	or	$a2, $at
 	sll	$a0, $a1, 7
 	srl	$a0, 7
-	li	$t5, 0xd0000000
-	or	$t5, $a0
+	li	$a5, 0xd0000000
+	or	$a5, $a0
 	move	$a1, $a2
-	sw	$t5, 0($t2)	/* store converted address */
+	sw	$a5, 0($t2)	/* store converted address */
 	b	type_d
 	sw	$a1, 4($t2)	/* store converted value */
 next:
 	/* next code */
-	addiu	$t4, 1
-	sltu	$at, $t4, $t3
+	addiu	$a4, 1
+	sltu	$at, $a4, $t3
 	bnez	$at, ch_loop
 	nop
 ch_ret:
