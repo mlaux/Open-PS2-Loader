@@ -20,13 +20,13 @@ extern int size_cdvdfsv_irx;
 extern void *_end;
 
 /* Do not link to strcpy() from libc */
-inline void _strcpy(char *dst, const char *src)
+void _strcpy(char *dst, const char *src)
 {
     strncpy(dst, src, strlen(src) + 1);
 }
 
 /* Do not link to strcat() from libc */
-inline void _strcat(char *dst, const char *src)
+void _strcat(char *dst, const char *src)
 {
     _strcpy(&dst[strlen(dst)], src);
 }

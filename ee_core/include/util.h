@@ -12,8 +12,8 @@
 
 #include <tamtypes.h>
 
-inline void _strcpy(char *dst, const char *src);
-inline void _strcat(char *dst, const char *src);
+void _strcpy(char *dst, const char *src);
+void _strcat(char *dst, const char *src);
 int _strncmp(const char *s1, const char *s2, int length);
 int _strcmp(const char *s1, const char *s2);
 char *_strchr(const char *string, int c);
