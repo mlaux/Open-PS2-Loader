@@ -59,7 +59,7 @@ _ip_cksum:
     move    $t3, $zero
     move    $t2, $zero
     beqz    $v0, 1f
-    move    $t4, $zero
+    move    $a4, $zero
     slti    $v1, $a1, 3
     bnez    $v1, 2f
     andi    $a1, $t0, 0x1
@@ -68,86 +68,86 @@ _ip_cksum:
 14:
     andi    $a3, $t0, 0x2
     beqz    $a3, 4f
-    slti    $t6, $t1, 72
-    lhu     $t5, 0($t0)
+    slti    $a6, $t1, 72
+    lhu     $a5, 0($t0)
     addiu   $t1, $t1, -2
-    addu    $t2, $t2, $t5
+    addu    $t2, $t2, $a5
     addiu   $t0, $t0, 2
 1:
-    slti    $t6, $t1, 72
+    slti    $a6, $t1, 72
 4:
-    bnez    $t6, 5f
+    bnez    $a6, 5f
     nop
     lw      $v1, 0($t0)
     lw      $a3, 4($t0)
 6:
     lw      $a1, 8($t0)
-    srl     $t7, $v1, 16
-    addu    $t5, $t3, $t7
+    srl     $a7, $v1, 16
+    addu    $a5, $t3, $a7
     lw      $t9, 12($t0)
     addu    $v1, $a0, $v1
-    srl     $t6, $a3, 16
-    addu    $a2, $t5, $t6
+    srl     $a6, $a3, 16
+    addu    $a2, $a5, $a6
     addu    $t3, $v1, $a3
-    lw      $t5, 16($t0)
+    lw      $a5, 16($t0)
     srl     $a3, $a1, 16
     addu    $v0, $a2, $a3
     addu    $t8, $t3, $a1
     srl     $a0, $t9, 16
     lw      $a1, 20($t0)
-    addu    $t6, $v0, $a0
+    addu    $a6, $v0, $a0
     addu    $v1, $t8, $t9
-    srl     $t7, $t5, 16
+    srl     $a7, $a5, 16
     lw      $t9, 24($t0)
-    addu    $a2, $t6, $t7
-    addu    $t3, $v1, $t5
+    addu    $a2, $a6, $a7
+    addu    $t3, $v1, $a5
     srl     $a3, $a1, 16
-    lw      $t5, 28($t0)
+    lw      $a5, 28($t0)
     addu    $v0, $a2, $a3
     addu    $t8, $t3, $a1
     srl     $a0, $t9, 16
     lw      $a1, 32($t0)
-    addu    $t6, $v0, $a0
+    addu    $a6, $v0, $a0
     addu    $v1, $t8, $t9
-    srl     $t7, $t5, 16
+    srl     $a7, $a5, 16
     lw      $t9, 36($t0)
-    addu    $a2, $t6, $t7
-    addu    $t3, $v1, $t5
+    addu    $a2, $a6, $a7
+    addu    $t3, $v1, $a5
     srl     $a3, $a1, 16
-    lw      $t5, 40($t0)
+    lw      $a5, 40($t0)
     addu    $v0, $a2, $a3
     addu    $t8, $t3, $a1
     srl     $a0, $t9, 16
     lw      $a1, 44($t0)
-    addu    $t6, $v0, $a0
+    addu    $a6, $v0, $a0
     addu    $v1, $t8, $t9
-    srl     $t7, $t5, 16
+    srl     $a7, $a5, 16
     lw      $t9, 48($t0)
-    addu    $a2, $t6, $t7
-    addu    $t3, $v1, $t5
+    addu    $a2, $a6, $a7
+    addu    $t3, $v1, $a5
     srl     $a3, $a1, 16
-    lw      $t5, 52($t0)
+    lw      $a5, 52($t0)
     addu    $v0, $a2, $a3
     addu    $t8, $t3, $a1
     srl     $a0, $t9, 16
     lw      $a1, 56($t0)
     addu    $v1, $t8, $t9
-    addu    $t6, $v0, $a0
+    addu    $a6, $v0, $a0
     lw      $t8, 60($t0)
-    srl     $t7, $t5, 16
-    addu    $t3, $v1, $t5
-    addu    $a2, $t6, $t7
+    srl     $a7, $a5, 16
+    addu    $t3, $v1, $a5
+    addu    $a2, $a6, $a7
     srl     $a3, $a1, 16
     addiu   $t1, $t1, -64
     addu    $v0, $a2, $a3
     addu    $t9, $t3, $a1
     srl     $a0, $t8, 16
-    slti    $t7, $t1, 72
+    slti    $a7, $t1, 72
     addu    $t3, $v0, $a0
     lw      $v1, 64($t0)
     lw      $a3, 68($t0)
     addu    $a0, $t9, $t8
-    beqz    $t7, 6b
+    beqz    $a7, 6b
     addiu   $t0, $t0, 64
     sll     $v0, $t3, 16
     subu    $t9, $a0, $v0
@@ -168,9 +168,9 @@ _ip_cksum:
     beqz    $t3, 8b
     addu    $a1, $a1, $a3
 7:
-    sll     $t6, $a2, 16
-    subu    $t5, $a1, $t6
-    addu    $a1, $t2, $t5
+    sll     $a6, $a2, 16
+    subu    $a5, $a1, $a6
+    addu    $a1, $t2, $a5
     slti    $v1, $t1, 2
     b       9f
     addu    $t2, $a1, $a2
@@ -187,24 +187,24 @@ _ip_cksum:
     blez    $t1, 11f
     addiu   $a0, $t1, -1
 12:
-    lbu     $t7, 0($t0)
+    lbu     $a7, 0($t0)
     move    $t1, $a0
-    addu    $t2, $t2, $t7
+    addu    $t2, $t2, $a7
     addiu   $t0, $t0, 1
     bgtz    $t1, 12b
     addiu   $a0, $a0, -1
 11:
     srl     $v1, $t2, 16
-    beqz    $t4, 13f
+    beqz    $a4, 13f
     andi    $v0, $t2, 0xFFFF
     srl     $t3, $t2, 16
     andi    $a0, $t2, 0xFFFF
     addu    $v0, $a0, $t3
     srl     $t9, $v0, 16
     andi    $t8, $v0, 0xFFFF
-    addu    $t4, $t8, $t9
-    andi    $t0, $t4, 0xFF
-    srl     $t2, $t4, 8
+    addu    $a4, $t8, $t9
+    andi    $t0, $a4, 0xFF
+    srl     $t2, $a4, 8
     andi    $v0, $t2, 0xFF
     sll     $v1, $t0, 8
 13:
@@ -219,7 +219,7 @@ _ip_cksum:
     sll     $t2, $a2, 8
     addiu   $t0, $t0, 1
     b       14b
-    li      $t4, 1
+    li      $a4, 1
 
 inet_chksum:
     addiu   $sp, $sp, -8
@@ -290,10 +290,10 @@ inet_chksum_pseudo:
     bnez    $s0, 5b
     nop
     beqz    $s2, 1f
-    andi    $t4, $s1, 0xFF00
-    andi    $t5, $s1, 0xFF
-    sll     $t3, $t5, 8
-    srl     $t2, $t4, 8
+    andi    $a4, $s1, 0xFF00
+    andi    $a5, $s1, 0xFF
+    sll     $t3, $a5, 8
+    srl     $t2, $a4, 8
     or      $s1, $t3, $t2
 1:
     lwl     $v1, 3($s3)
@@ -309,11 +309,11 @@ inet_chksum_pseudo:
     lwr     $s2, 0($s4)
     addu    $s3, $t8, $t9
     andi    $s4, $s5, 0xFFFF
-    addu    $t6, $s3, $s4
-    srl     $t7, $s2, 16
+    addu    $a6, $s3, $s4
+    srl     $a7, $s2, 16
     move    $a0, $s6
     bal     _htons
-    addu    $s1, $t6, $t7
+    addu    $s1, $a6, $a7
     move    $a0, $s7
     bal     _htons
     addu    $s0, $s1, $v0
@@ -399,20 +399,20 @@ _inet_aton:
     addiu   $sp, $sp, -40
     sw      $s0, 32($sp)
     sw      $ra, 36($sp)
-    addiu   $t7, $sp, 16
+    addiu   $a7, $sp, 16
     lbu     $a2, 0($a0)
     move    $s0, $a1
-    move    $t3, $t7
-    li      $t4, 48
-    li      $t5, 46
+    move    $t3, $a7
+    li      $a4, 48
+    li      $a5, 46
     addiu   $v0, $a2, -48
     andi    $a3, $v0, 0xFF
     sltiu   $v1, $a3, 10
     beqz    $v1, 1f
-    addiu   $t6, $sp, 28
+    addiu   $a6, $sp, 28
 14:
     move    $t0, $zero
-    beq     $a2, $t4, 2f
+    beq     $a2, $a4, 2f
     li      $t1, 10
 10:
     li      $t2, 16
@@ -481,9 +481,9 @@ _inet_aton:
     b       10b
     andi    $a3, $t9, 0xFF
 5:
-    bne     $a2, $t5, 11f
+    bne     $a2, $a5, 11f
     nop
-    sltu    $a2, $t3, $t6
+    sltu    $a2, $t3, $a6
     beqz    $a2, 12f
     move    $v1, $zero
     addiu   $a0, $a0, 1
@@ -508,29 +508,29 @@ _inet_aton:
     li      $t1, 8
 11:
     beqz    $a2, 15f
-    subu    $t6, $t3, $t7
-    addiu   $t4, $a2, -32
-    sltiu   $a0, $t4, 96
+    subu    $a6, $t3, $a7
+    addiu   $a4, $a2, -32
+    sltiu   $a0, $a4, 96
     beqz    $a0, 12b
     move    $v1, $zero
     xori    $v0, $a2, 0x20
     xori    $t2, $a2, 0xC
-    sltu    $t6, $zero, $v0
+    sltu    $a6, $zero, $v0
     sltu    $t1, $zero, $t2
-    and     $t5, $t6, $t1
-    beqz    $t5, 15f
-    subu    $t6, $t3, $t7
+    and     $a5, $a6, $t1
+    beqz    $a5, 15f
+    subu    $a6, $t3, $a7
     xori    $t9, $a2, 0xA
     xori    $a3, $a2, 0xD
     sltu    $t8, $zero, $t9
     sltu    $a1, $zero, $a3
     and     $v1, $t8, $a1
     bnez    $v1, 16f
-    xori    $t4, $a2, 0xB
-    subu    $t6, $t3, $t7
+    xori    $a4, $a2, 0xB
+    subu    $a6, $t3, $a7
 15:
-    sra     $t7, $t6, 2
-    addiu   $a0, $t7, 1
+    sra     $a7, $a6, 2
+    addiu   $a0, $a7, 1
     li      $t3, 2
     beq     $a0, $t3, 17f
     slti    $t1, $a0, 3
@@ -566,38 +566,38 @@ _inet_aton:
     beq     $a0, $t2, 21f
     li      $v0, 4
     bne     $a0, $v0, 10b
-    sltiu   $t7, $t0, 256
-    beqz    $t7, 12b
+    sltiu   $a7, $t0, 256
+    beqz    $a7, 12b
     move    $v1, $zero
     lw      $a1, 16($sp)
     lw      $v1, 20($sp)
     lw      $t2, 24($sp)
     sll     $v0, $a1, 24
     sll     $t8, $v1, 16
-    or      $t6, $v0, $t8
+    or      $a6, $v0, $t8
     sll     $t1, $t2, 8
-    or      $v0, $t6, $t1
+    or      $v0, $a6, $t1
     b       10b
     or      $t0, $t0, $v0
 16:
-    xori    $t5, $a2, 0x9
-    sltu    $a2, $zero, $t5
-    sltu    $a0, $zero, $t4
+    xori    $a5, $a2, 0x9
+    sltu    $a2, $zero, $a5
+    sltu    $a0, $zero, $a4
     and     $ra, $a2, $a0
     bnez    $ra, 12b
     move    $v1, $zero
     b       15b
-    subu    $t6, $t3, $t7
+    subu    $a6, $t3, $a7
 21:
     li      $ra, 0xFFFF
     sltu    $t9, $ra, $t0
     bnez    $t9, 12b
     move    $v1, $zero
     lw      $t3, 16($sp)
-    lw      $t5, 20($sp)
+    lw      $a5, 20($sp)
     sll     $a0, $t3, 24
-    sll     $t4, $t5, 16
-    or      $a2, $a0, $t4
+    sll     $a4, $a5, 16
+    or      $a2, $a0, $a4
     b       10b
     or      $t0, $t0, $a2
 
@@ -618,13 +618,13 @@ inet_addr:
 inet_ntoa:
     lui     $v0, %hi( s_Str )
     addiu   $sp, $sp, -8
-    addiu   $t5, $v0, %lo( s_Str )
+    addiu   $a5, $v0, %lo( s_Str )
     sw      $a0, 8($sp)
-    move    $a3, $t5
+    move    $a3, $a5
     addiu   $t1, $sp, 8
     move    $t2, $zero
     li      $t0, 10
-    li      $t4, 255
+    li      $a4, 255
     li      $t3, 46
 4:
     lbu     $a1, 0($t1)
@@ -635,14 +635,14 @@ inet_ntoa:
     addiu   $v1, $v1, 1
     andi    $v1, $v1, 0xFF
     mfhi    $a1
-    addiu   $t6, $a1, 48
+    addiu   $a6, $a1, 48
     mflo    $a2
     andi    $a1, $a2, 0xFF
     bnez    $a1, 1b
-    sb      $t6, 0($a0)
-    addiu   $t7, $v1, -1
-    andi    $v1, $t7, 0xFF
-    beq     $v1, $t4, 2f
+    sb      $a6, 0($a0)
+    addiu   $a7, $v1, -1
+    andi    $v1, $a7, 0xFF
+    beq     $v1, $a4, 2f
     sb      $a2, 0($t1)
     li      $a1, 255
 3:
@@ -661,7 +661,7 @@ inet_ntoa:
     addiu   $t1, $t1, 1
     bnez    $v0, 4b
     addiu   $a3, $a3, 1
-    move    $v0, $t5
+    move    $v0, $a5
     addiu   $sp, $sp, 8
     jr      $ra
     sb      $zero, -1($a3)
