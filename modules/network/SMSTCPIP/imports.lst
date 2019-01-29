@@ -44,6 +44,7 @@ I_DeleteSema
 thsemap_IMPORTS_end
 
 sysclib_IMPORTS_start
+I_memcpy
 I_strcpy
 sysclib_IMPORTS_end
 
