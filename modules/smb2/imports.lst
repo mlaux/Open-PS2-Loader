@@ -1,0 +1,13 @@
+ioman_IMPORTS_start
+I_DelDrv
+I_AddDrv
+I_open
+I_lseek
+I_write
+I_close
+I_remove
+ioman_IMPORTS_end
+
+stdio_IMPORTS_start
+I_printf
+stdio_IMPORTS_end

@@ -90,7 +90,7 @@ IOP_OBJS =	iomanx.o filexio.o ps2fs.o usbd.o usbhdfsd.o usbhdfsdfsv.o \
 		httpclient-iop.o netman.o ps2ips.o \
 		usb_mcemu.o hdd_mcemu.o smb_mcemu.o \
 		iremsndpatch.o apemodpatch.o f2techioppatch.o cleareffects.o resetspu.o \
-		libsd.o audsrv.o
+		libsd.o audsrv.o smb2.o
 
 EECORE_OBJS = ee_core.o ioprp.o util.o \
 		elfldr.o udnl.o imgdrv.o eesync.o \
@@ -298,6 +298,8 @@ clean:
 	echo " -pademu"
 	$(MAKE) -C modules/pademu USE_BT=1 clean
 	$(MAKE) -C modules/pademu USE_USB=1 clean
+	echo " -smb2"
+	$(MAKE) -C modules/smb2 clean
 	echo "-pc tools"
 	$(MAKE) -C pc clean
 
@@ -626,6 +628,12 @@ modules/network/httpclient/httpclient.irx: modules/network/httpclient
 
 $(EE_ASM_DIR)httpclient-iop.s: modules/network/httpclient/httpclient.irx | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ httpclient_irx
+
+modules/smb2/smb2.irx: modules/smb2
+	$(MAKE) -C $<
+
+$(EE_ASM_DIR)smb2.s: modules/smb2/smb2.irx | $(EE_ASM_DIR)
+	$(BIN2S) $< $@ smb2_irx
 
 $(EE_ASM_DIR)iomanx.s: $(PS2SDK)/iop/irx/iomanX.irx | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ iomanx_irx
