@@ -3,7 +3,12 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <sysclib.h>
+#include <ps2ip.h>
+#include <alloc.h>
+#include <thbase.h>
 
+#include <errno.h>
 #include <loadcore.h>
 #include <ioman.h>
 #include <irx.h>
