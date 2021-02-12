@@ -26,6 +26,7 @@ I_lwip_send
 I_lwip_socket
 I_lwip_select
 I_lwip_setsockopt
+I_ipaddr4_aton
 ps2ip_IMPORTS_end
 
 stdio_IMPORTS_start
@@ -51,6 +52,7 @@ I_strncpy
 I_strtok
 I_strtol
 I_toupper
+I_vsprintf
 sysclib_IMPORTS_end
 
 thbase_IMPORTS_start
